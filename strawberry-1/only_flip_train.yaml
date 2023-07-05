@@ -1,0 +1,18 @@
+names:
+- Angular Leafspot
+- Anthracnose Fruit Rot
+- Blossom Blight
+- Gray Mold
+- Leaf Spot
+- Powdery Mildew Fruit
+- Powdery Mildew Leaf
+nc: 7
+roboflow:
+  license: CC BY 4.0
+  project: strawberry-hxgaj
+  url: https://universe.roboflow.com/dlbs-zcxsj/strawberry-hxgaj/dataset/1
+  version: 1
+  workspace: dlbs-zcxsj
+test: ../test/images
+train: /media/bruno/0d2f61d2-2b9c-4043-9a46-8e4dfe74fc95/bruno/Documents/dlbs_fs23/strawberry-1/only_flip_train/images
+val: strawberry-1/valid/images
