@@ -14,6 +14,16 @@ tating overlapping instances of disease clusters and potential overfitting. Desp
 evaluation in the notebooks showcases opportunities for further optimization of the YOLOv8
 model.
 
+## Data
+The strawberry disease dataset is a high quality dataset where most images are close ups of individual leaves and fruits. It is available at [Kaggle](https://www.kaggle.com/datasets/usmanafzaal/strawberry-disease-detection-dataset). It consists of 2500 images in total with corresponding segmentation annotation files (one per image) for seven types of diseases found in Strawberry plant. The diseases can be seen in figure below. The data was collected from multiple greenhouses under natural illumination conditions in South Korea and the diseases were verified by experts. The images were processed to 419 x 419 resolution. The dataset is split into 1450, 307 and 743 images for training,  validation and test sets. For image there exists an individual json file with a list of ground-truth annotations. Each annotation has the label name as a string and a list of points with x and y coordinates that span the segmentation mask polygon. For model training, the data was uploaded to Roboflow: (LINK)[https://universe.roboflow.com/dlbs-zcxsj/strawberry-hxgaj/model/2]
+
+![Strawberry-disease-image](https://github.com/BrunoKreiner/strawberry_diseases/assets/19567972/d0ddc2a2-37ae-43fb-81e0-14a9f6a5526e)
+
+
+## Results
+In this project, various configurations of the YOLOv8 model were evaluated for an instance segmentation task. For chapter 3, a Mask R-CNN skeleton was trained. As already discussed, the Mask R-CNN model didn't learn and the results of the baseline Mask R-CNN model from existing research couldn't be reproduced. Using YOLOv8 as a backup, a 10% mAP improvement could be achieved over the baseline from the existing paper. Different kinds of YOLOv8 models were trained over 100 epochs. These models show a steady decrease in training loss for box prediction, segmentation and class prediction. The base model already performs very well at around 92-93% mAP50. Additional data augmentation techniques can potentially decrease performance due to YOLOv8's inbuilt data augmentation. The "Base XL" performed the best on the validation data. It was trained using YOLOv8's XL model. All other models, which come very close to it, were trained using YOLOv8's small model. A test run with a smaller learning rate (factor of 10) and full augmentation strategy based on the augmentation steps from the existing research follows the "Base XL" closely while some other models actually worsen with data augmentation. This can be seen in the figure below. Using the same data augmentation, using the AdamW optimizer or setting the pretrained parameter in YOLOv8 to true also improved results. The existing paper uses "Edge Detect" and "Color Enhancement" for training their best Mask R-CNN model. The direct implementation of those augmentations were not found in common augmentation libraries such as PyTorch or Albumentations. Therefore, "Edge Detect" was left out and "Color Enhancement" was replaced with "RGB Shift". Interestingly, smaller learning rates led to faster learning, contradicting expectations. Just changing hyperparameters or using the base model with data augmentation didn't lead to improved training results. The use of dropout (regularization) improved the validation mAPs by almost 1% in comparison to its baseline. Despite validation loss not being tracked correctly by YOLOv8, results indicate possible overfitting since dropout clearly improved results. Furthermore, a spike in training loss at the 90th epoch was observed, without any discernible impact on the validation metrics. The confusion matrices revealed that most false positives or negatives were for the background class, which is also shown in the existing research for the Mask R-CNN. Manual evaluations showed accurate box and class predictions, with some limitatrions in detailed mask placement. It occasionally struggled to create detailed and accurate masks, especially for diseases appearing in clusters. This might be due to a misplacement of bounding boxes in the data set by researchers using the LabelMe website since for one cluster, multiple boxes can be placed on individual disease spots. In summary, this project demonstrated the robust capabilities of YOLOv8 in instance segmentation tasks, with potential further improvements through careful manipulation of learning rates, dropout and other hyperparameters. It highlights the importance of understanding in-built data augmentation functions and their impact on model performance. A more detailed description is in the notebook "yolov8\_evaluation.ipynb".
+
+![barplot_yolov8_models](https://github.com/BrunoKreiner/strawberry_diseases/assets/19567972/d0845db9-d462-46c2-a82b-44d039e04749)
 
 ## Setup
 
@@ -50,94 +60,6 @@ This project has the following key directories:
 - `./strawberry` - This directory contains the base strawberry dataset.
 
 - `./strawberry1` - This directory contains the strawberry dataset by Roboflow and augmented copies.
-
-
-
-## Additional Evaluation Criteria
-
-**MC organisation in Sprint format**
-
-Mini-challenge is organized and structured in 5 phases with weekly goals to be achieved, including weekly review & retrospective, next steps & risks/improvements.
-
-**Scale**
-
-Note 6. Scope defined for each week till mini-challenge submission with clear goals/targets to be achieved. All 5 weekly goals achieved on time. Weekly review & retrospective was conducted, documented and shared with Susanne. 
-
-Note 5. Scope discussed and planned each week. 1 out of 5 weekly goals missed. Weekly review per week conducted, documented and shared every week.
-
-Note 4. High level weekly planning in place. 60% of weekly goals were achieved on time i.e. 2 out of 5 weekly goals missed. Weekly review conducted, documented and shared with final submission.
-
-Note 3. High level weekly planning in place. 4 out of 5 weekly goals missed. No weekly tracking & progress documented.
-
-Note 2. High level weekly planning in place. All sprint goals missed. No weekly tracking
-
-Note 1. No high level weekly planned.
-
-## Proposed DLBS mini-challenge backlog
-
-### Week 1 goals
-
-Timeframe: 18.04. – 25.04.2023
-
-- Deep-dive 3 participation
-- Step 1: Data inspection
-- Setup GitHub
-- Milestone 1 preparation: Pitch on 25.04 
-- Weekly review & retrospective conducted & documented
-
-Definition of Done:
-- First hand Data inspection completed and notebook uploaded in GitHub with Tag/comment in 'commit'
-- Tag: 'Week 1 DoD'
-
-### Week 2 goals
-
-Timeframe: 25.04. – 02.05.2023
-
-- Step 2: Training skeleton with Baseline model in place 
-- Weekly review & retrospective
-
-Definition of Done:
-- Skeleton baseline model uploaded on GitHub with tag/comment in 'commit'
-- Weekly retrospective available and uploaded on the GitHub with tag/commit in 'commit'
-- Tag: 'Week 2 DoD'
-
-### Week 3 goals
-
-Timeframe: 02.05. – 09.05.2023
-
-- Step 3: Overfit and regularize per person
-- Weekly review & retrospective conducted & documented
-
-Definition of Done:
-- Each team member has model variation with overfit & regularization ready & uploaded on GitHub with tag/comment in 'commit'
-- Weekly retrospective available and uploaded on the GitHub with tag/commit in 'commit'
-- Tag: 'Week 3 DoD'
-
-### Week 4 goals
-
-Timeframe: 08.05 – 12.05.2023
-
-- step 4: Model tuning 
-- Weekly review & retrospective conducted & documented
-
-Definition of Done:
-- Finding / tuned model per team member is uploaded on GitHub with tag/comment in 'commit'
-- Weekly retrospective available and uploaded on the GitHub with tag/commit in 'commit'
-- Tag: 'Week 4 DoD'
-
-### Week 5 goals
-
-Timeframe: 09.05. – 19.05.2023
-
-- Documentation completed (Document paper on OverLeaf)
-- Milestone 2: Demo on 16.05.2023
-- Weekly review & retrospective conducted & documented
-- Bonus task per person completed
-- Milestone 3: Final submission on 19.05.2023 in GitHub
-
-Definition of Done:
-- Final submission & Code including Documentation uploaded on GitHub Repo with tag/comment in 'commit'
-- Tag: 'Week 5 DoD'
 
 
 
